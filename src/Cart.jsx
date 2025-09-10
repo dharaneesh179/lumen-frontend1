@@ -9,6 +9,14 @@ function Cart() {
     setCartItems(storedCart);
   }, []);
 
+  // Remove item from cart
+  const removeFromCart = (index) => {
+    const updatedCart = [...cartItems];
+    updatedCart.splice(index, 1);
+    setCartItems(updatedCart);
+    localStorage.setItem("cart", JSON.stringify(updatedCart));
+  };
+
   const total = cartItems.reduce((sum, item) => sum + item.price, 0);
 
   return (
@@ -30,10 +38,25 @@ function Cart() {
                   borderRadius: "8px",
                   display: "flex",
                   justifyContent: "space-between",
+                  alignItems: "center",
                 }}
               >
                 <span>{item.name}</span>
                 <span>₹{item.price}</span>
+                <button
+                  onClick={() => removeFromCart(index)}
+                  style={{
+                    marginLeft: "10px",
+                    background: "#e74c3c",
+                    color: "white",
+                    border: "none",
+                    borderRadius: "5px",
+                    cursor: "pointer",
+                    padding: "5px 10px",
+                  }}
+                >
+                  Remove
+                </button>
               </li>
             ))}
           </ul>

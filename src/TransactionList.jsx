@@ -4,8 +4,17 @@ function TransactionList() {
   const [transactions, setTransactions] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:8080/api/transactions")
-      .then((res) => res.json())
+    const token = localStorage.getItem("token"); // get JWT token
+
+    fetch("http://localhost:8080/api/transactions", {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error("Failed to fetch transactions");
+        return res.json();
+      })
       .then((data) => setTransactions(data))
       .catch((err) => console.error(err));
   }, []);
@@ -14,43 +23,35 @@ function TransactionList() {
     <div style={{ padding: "20px" }}>
       <h2>Transactions</h2>
       <table
-        style={{
-          borderCollapse: "collapse",
-          width: "100%",
-          textAlign: "left",
-        }}
+        style={{ borderCollapse: "collapse", width: "100%", textAlign: "left" }}
       >
         <thead>
           <tr style={{ backgroundColor: "#f2f2f2" }}>
-            <th style={{ border: "1px solid #ddd", padding: "8px" }}>ID</th>
-            <th style={{ border: "1px solid #ddd", padding: "8px" }}>Quantity</th>
-            <th style={{ border: "1px solid #ddd", padding: "8px" }}>Date</th>
-            <th style={{ border: "1px solid #ddd", padding: "8px" }}>User</th>
-            <th style={{ border: "1px solid #ddd", padding: "8px" }}>Role</th>
-            <th style={{ border: "1px solid #ddd", padding: "8px" }}>Product</th>
-            <th style={{ border: "1px solid #ddd", padding: "8px" }}>Category</th>
-            <th style={{ border: "1px solid #ddd", padding: "8px" }}>Stock</th>
-            <th style={{ border: "1px solid #ddd", padding: "8px" }}>Reorder Point</th>
-            <th style={{ border: "1px solid #ddd", padding: "8px" }}>Price</th>
+            <th>ID</th>
+            <th>Quantity</th>
+            <th>Date</th>
+            <th>User</th>
+            <th>Role</th>
+            <th>Product</th>
+            <th>Category</th>
+            <th>Stock</th>
+            <th>Reorder Point</th>
+            <th>Price</th>
           </tr>
         </thead>
         <tbody>
           {transactions.map((t) => (
             <tr key={t.id}>
-              <td style={{ border: "1px solid #ddd", padding: "8px" }}>{t.id}</td>
-              <td style={{ border: "1px solid #ddd", padding: "8px" }}>{t.quantity}</td>
-              <td style={{ border: "1px solid #ddd", padding: "8px" }}>
-                {new Date(t.transactionDate).toLocaleString()}
-              </td>
-              <td style={{ border: "1px solid #ddd", padding: "8px" }}>{t.user.username}</td>
-              <td style={{ border: "1px solid #ddd", padding: "8px" }}>{t.user.role}</td>
-              <td style={{ border: "1px solid #ddd", padding: "8px" }}>{t.product.name}</td>
-              <td style={{ border: "1px solid #ddd", padding: "8px" }}>{t.product.category}</td>
-              <td style={{ border: "1px solid #ddd", padding: "8px" }}>{t.product.stockLevel}</td>
-              <td style={{ border: "1px solid #ddd", padding: "8px" }}>{t.product.reorderPoint}</td>
-              <td style={{ border: "1px solid #ddd", padding: "8px" }}>
-                {t.product.price ? `₹${t.product.price}` : "N/A"}
-              </td>
+              <td>{t.id}</td>
+              <td>{t.quantity}</td>
+              <td>{new Date(t.transactionDate).toLocaleString()}</td>
+              <td>{t.user.username}</td>
+              <td>{t.user.role}</td>
+              <td>{t.product.name}</td>
+              <td>{t.product.category}</td>
+              <td>{t.product.stockLevel}</td>
+              <td>{t.product.reorderPoint}</td>
+              <td>{t.product.price ? `₹${t.product.price}` : "N/A"}</td>
             </tr>
           ))}
         </tbody>

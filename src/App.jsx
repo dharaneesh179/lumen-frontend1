@@ -17,11 +17,10 @@ function App() {
     }
   };
 
-return (
+  return (
     <div>
       <header style={{ background: "#282c34", padding: "1rem", color: "white" }}>
         <h1>Lumen Website</h1>
-
         <nav>
           <ul style={{ display: "flex", listStyle: "none", gap: "20px" }}>
             <li><Link to="/" style={{ color: "white", textDecoration: "none" }}>Home</Link></li>
@@ -32,7 +31,14 @@ return (
             <li><Link to="/cart" style={{ color: "white", textDecoration: "none" }}>🛒 Cart</Link></li>
           </ul>
         </nav>
-        {/* search bar stays same */}
+        <input
+          type="text"
+          placeholder="Search..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          onKeyDown={handleSearch}
+          style={{ marginTop: "10px", padding: "5px", width: "200px" }}
+        />
       </header>
 
       <main style={{ padding: "20px" }}>
@@ -43,10 +49,11 @@ return (
           <Route path="/transactions" element={<TransactionList searchQuery={searchQuery} />} />
           <Route path="/users" element={<UserList searchQuery={searchQuery} />} />
           <Route path="/search" element={<SearchResults />} />
-          <Route path="/cart" element={<Cart />} /> {/* new cart route */}
+          <Route path="/cart" element={<Cart />} />
         </Routes>
       </main>
     </div>
   );
 }
+
 export default App;

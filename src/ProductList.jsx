@@ -4,12 +4,30 @@ import "./ProductList.css";
 function ProductList({ searchQuery }) {
   const [products, setProducts] = useState([]);
 
-  // Fetch products from backend
+  // Fetch products from backend with JWT
   useEffect(() => {
-    fetch("http://localhost:8080/api/products") // ✅ fixed path
-      .then((res) => res.json())
-      .then((data) => setProducts(data))
-      .catch((err) => console.error(err));
+    const fetchProducts = async () => {
+      try {
+        const response = await fetch("http://localhost:8080/api/products", {
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${localStorage.getItem("token")}` // send JWT token
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch products");
+        }
+
+        const data = await response.json();
+        setProducts(data);
+      } catch (err) {
+        console.error(err);
+        alert(err.message);
+      }
+    };
+
+    fetchProducts();
   }, []);
 
   // Add to cart function
@@ -31,11 +49,7 @@ function ProductList({ searchQuery }) {
       <div className="product-grid">
         {filteredProducts.map((product) => (
           <div key={product.id} className="product-card">
-            <img
-              src={product.imageUrl}
-              alt={product.name}
-              className="product-img"
-            />
+            <img src={product.imageUrl} alt={product.name} className="product-img" />
             <h3>{product.name}</h3>
             <p className="price">₹{product.price}</p>
             {product.stockLevel <= product.reorderPoint && (

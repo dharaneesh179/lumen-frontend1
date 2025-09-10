@@ -1,12 +1,21 @@
 import React, { useEffect, useState } from "react";
-import "./SupplierList.css"; // external CSS for styling
+import "./SupplierList.css";
 
 function SupplierList() {
   const [suppliers, setSuppliers] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:8080/api/suppliers")
-      .then((res) => res.json())
+    const token = localStorage.getItem("token"); // get JWT token
+
+    fetch("http://localhost:8080/api/suppliers", {
+      headers: {
+        Authorization: `Bearer ${token}` // send token in Authorization header
+      }
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error("Failed to fetch suppliers");
+        return res.json();
+      })
       .then((data) => setSuppliers(data))
       .catch((err) => console.error(err));
   }, []);
